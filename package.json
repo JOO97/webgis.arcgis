@@ -1,0 +1,27 @@
+{
+	"name": "arcgis",
+	"version": "1.0.0",
+	"description": "",
+	"private": true,
+	"scripts": {
+		"dev-learn": "pnpm run -C packages/learn-arcgis dev"
+	},
+	"workspaces": [
+		"packages/*"
+	],
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"@arcgis/core": "^4.28.10",
+		"@changesets/cli": "^2.27.1",
+		"@esri/calcite-components": "^2.1.0",
+		"vue": "^3.3.11"
+	},
+	"devDependencies": {
+		"@vitejs/plugin-vue": "^4.5.2",
+		"rollup-plugin-copy": "^3.5.0",
+		"vite": "^5.0.8",
+		"vite-plugin-static-copy": "^1.0.0"
+	}
+}
