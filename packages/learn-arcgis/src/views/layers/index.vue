@@ -13,19 +13,17 @@ import ScaleBar from '@arcgis/core/widgets/ScaleBar';
 import Legend from '@arcgis/core/widgets/Legend';
 
 /* Calcite Components */
-import '@esri/calcite-components/dist/components/calcite-button';
 import '@esri/calcite-components/dist/components/calcite-label';
 import '@esri/calcite-components/dist/components/calcite-combobox';
 import '@esri/calcite-components/dist/components/calcite-combobox-item';
 import '@esri/calcite-components/dist/components/calcite-icon';
 
-// import SceneView from '@arcgis/core/views/SceneView';
-
-/* Add a point, line, and polygon */
+/* Graphic */
 import Graphic from '@arcgis/core/Graphic';
 import GraphicsLayer from '@arcgis/core/layers/GraphicsLayer';
 
-import GraphicsLayer from '@arcgis/core/layers/GraphicsLayer';
+/* FeatureLayer */
+import FeatureLayer from '@arcgis/core/layers/FeatureLayer';
 
 /* Language */
 import * as intl from '@arcgis/core/intl'; //NOTE: 注意引入方式
@@ -41,32 +39,14 @@ const initMap = () => {
 	EsriConfig.apiKey =
 		'AAPK04c877a49a364174be41ac33b2cf83d1R-a7rMk13YyhdbxpNx7ne6XmaIWVCclzlKmLU6iYLc-ZvyE1i-CDXgRqBYJodyNB';
 
-	const vectorTileLayer = new VectorTileLayer({
-		portalItem: {
-			// id: '6976148c11bd497d8624206f9ee03e30', // Forest and Parks Canvas
-			id: '03ae61e4f116430e81b2ecaa07b8754d',
-		},
-		opacity: 0.75,
-	});
-
-	const imageTileLayer = new TileLayer({
-		portalItem: {
-			id: '1b243539f4514b6ba35e7d995890db1d', // World Hillshade
-		},
-	});
-	const basemap = new Basemap({
-		baseLayers: [imageTileLayer, vectorTileLayer],
-	});
-
 	/* Base Map */
 	map = new Map({
 		// basemap: 'arcgis/imagery', //dark-gray
-		// basemap: {
-		// 	style: {
-		// 		id: 'arcgis/imagery',
-		// 	},
-		// },
-		basemap,
+		basemap: {
+			style: {
+				id: 'arcgis/imagery',
+			},
+		},
 		ground: 'world-elevation',
 	});
 
@@ -84,9 +64,13 @@ const initMap = () => {
 	mapView = new MapView({
 		map,
 		container: mapRef.value,
-		center: [118.122284, 24.4915235],
-		zoom: 11,
+		// center: [118.122284, 24.4915235],
+		// zoom: 11,
+		center: [-118.80543, 34.027],
+		zoom: 13,
 	});
+
+	addFeatureLayer();
 
 	updateMapLanguage('local');
 
@@ -155,6 +139,38 @@ const addGraphicsLayer = () => {
 		popupTemplate: { title: '{Name}', content: '{Description}' },
 	});
 	graphicsLayer.add(polygonGraphic);
+};
+
+/**
+ * Add feature layers
+ */
+const addFeatureLayer = () => {
+	console.log('mapView', mapView);
+
+	mapView.goTo({
+		center: [-118.80543, 34.027],
+		zoom: 13,
+	});
+	//Trailheads feature layer (points)
+	const trailheadsLayer = new FeatureLayer({
+		url: 'https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/Trailheads/FeatureServer/0',
+	});
+
+	map.add(trailheadsLayer);
+
+	//Trails feature layer (lines)
+	const trailsLayer = new FeatureLayer({
+		url: 'https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/Trails/FeatureServer/0',
+	});
+
+	map.add(trailsLayer, 0);
+
+	// Parks and open spaces (polygons)
+	const parksLayer = new FeatureLayer({
+		url: 'https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/Parks_and_Open_Space/FeatureServer/0',
+	});
+
+	map.add(parksLayer, 0);
 };
 
 onMounted(() => {
