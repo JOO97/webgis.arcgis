@@ -1,40 +1,5 @@
 <template>
 	<div id="mapView" ref="mapRef" />
-
-	<!-- Change Base Map Style -->
-	<div id="basemapStyles" class="esri-widget">
-		<calcite-label>Base Map Style</calcite-label>
-		<calcite-combobox
-			id="styleCombobox"
-			selection-mode="single"
-			clear-disabled
-			v-event:calciteComboboxChange="updateBaseMapStyle"
-		>
-			<calcite-combobox-item
-				v-for="item in styleOptions"
-				:value="item.value"
-				:text-label="item.label"
-			/>
-		</calcite-combobox>
-
-		<!-- <calcite-button>Button</calcite-button> -->
-	</div>
-	<!-- Change Language -->
-	<div id="mapLanguage" class="esri-widget">
-		<calcite-label>Map Language</calcite-label>
-		<calcite-combobox
-			id="styleCombobox"
-			selection-mode="single"
-			clear-disabled
-			v-event:calciteComboboxChange="(e) => updateMapLanguage(e.target.value)"
-		>
-			<calcite-combobox-item
-				v-for="item in languageOptions"
-				:value="item.value"
-				:text-label="item.label"
-			/>
-		</calcite-combobox>
-	</div>
 </template>
 
 <script setup>
@@ -56,13 +21,10 @@ import '@esri/calcite-components/dist/components/calcite-icon';
 
 // import SceneView from '@arcgis/core/views/SceneView';
 
-/* Custom Map Style */
-import Basemap from '@arcgis/core/Basemap';
-import VectorTileLayer from '@arcgis/core/layers/VectorTileLayer';
-import TileLayer from '@arcgis/core/layers/TileLayer';
-
 /* Add a point, line, and polygon */
 import Graphic from '@arcgis/core/Graphic';
+import GraphicsLayer from '@arcgis/core/layers/GraphicsLayer';
+
 import GraphicsLayer from '@arcgis/core/layers/GraphicsLayer';
 
 /* Language */
@@ -70,8 +32,6 @@ import * as intl from '@arcgis/core/intl'; //NOTE: 注意引入方式
 
 /* Config */
 import EsriConfig from '@arcgis/core/config';
-
-import { styleOptions, languageOptions } from './config';
 
 const mapRef = ref();
 let mapView = null,
@@ -139,40 +99,7 @@ const initMap = () => {
 	});
 	mapView.ui.add(legend, 'bottom-right');
 
-	const basemapStylesDiv = document.getElementById('basemapStyles');
-	mapView.ui.add(basemapStylesDiv, 'top-right');
-
-	const mapLanguageDiv = document.getElementById('mapLanguage');
-	mapView.ui.add(mapLanguageDiv, 'top-right');
-	// const styleCombobox = document.getElementById('styleCombobox');
-	// styleCombobox.addEventListener('calciteComboboxChange', (event) => {
-	// 	updateBaseMapStyle(event.target.value);
-	// });
-
-	/* 3D */
-	// const sceneView = new SceneView({
-	// 	map,
-	// 	container: mapRef.value,
-	// 	camera: {
-	// 		position: {
-	// 			x: 118.122284, //Longitude
-	// 			y: 24.4915235, //Latitude
-	// 			z: 4000, //Meters
-	// 		},
-	// 		tilt: 75,
-	// 	},
-	// });
-	// sceneView.ui._removeComponents(['attribution']); // 去掉arcgis的logo或标识
-
 	mapView.ui._removeComponents(['attribution']); // 去掉arcgis的logo或标识
-};
-
-/**
- * 更新底图样式
- * @param {*} e
- */
-const updateBaseMapStyle = (e) => {
-	mapView.map.basemap = e.target.value;
 };
 
 /**
@@ -180,7 +107,6 @@ const updateBaseMapStyle = (e) => {
  * @param {*} e
  */
 const updateMapLanguage = (languageCode) => {
-	return;
 	intl.setLocale(languageCode || 'zh-CN');
 
 	mapView.map.basemap = {
@@ -194,48 +120,6 @@ const updateMapLanguage = (languageCode) => {
 const addGraphicsLayer = () => {
 	const graphicsLayer = new GraphicsLayer();
 	map.add(graphicsLayer);
-
-	/* Create a point */
-	const point = {
-		type: 'point',
-		longitude: 118.134798,
-		latitude: 24.485586,
-	};
-	const simpleMarkerSymbol = {
-		type: 'simple-marker',
-		color: [226, 119, 40], // Orange
-		outline: {
-			color: [255, 255, 255], // White
-			width: 1,
-		},
-	};
-	const pointGraphic = new Graphic({
-		geometry: point,
-		symbol: simpleMarkerSymbol,
-	});
-	graphicsLayer.add(pointGraphic);
-
-	/* Create a line geometry */
-	const polyline = {
-		type: 'polyline',
-		paths: [
-			[118.15936, 24.498943],
-			[118.170607, 24.503473],
-			[118.173768, 24.50523],
-			[118.178576, 24.506597],
-			[118.183212, 24.511165],
-		],
-	};
-	const simpleLineSymbol = {
-		type: 'simple-line',
-		color: [226, 119, 40], // Orange
-		width: 2,
-	};
-	const polylineGraphic = new Graphic({
-		geometry: polyline,
-		symbol: simpleLineSymbol,
-	});
-	graphicsLayer.add(polylineGraphic);
 
 	/* Create a polygon geometry */
 	const polygon = {

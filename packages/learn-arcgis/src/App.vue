@@ -1,9 +1,9 @@
 <script setup>
-import Base from './views/base/index.vue';
+import Content from './views/layers/index.vue';
 </script>
 
 <template>
-	<Base />
+	<Content />
 </template>
 
 <style scoped></style>
